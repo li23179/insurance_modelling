@@ -62,9 +62,7 @@ parameters = {"C": [0.1, 1, 5],
 
 model = SVC()
 
-print("")
-
-clf = GridSearchCV(model, parameters, cv=3, scoring="accuracy", verbose=2)
+clf = GridSearchCV(model, parameters, cv=5, scoring="accuracy", verbose=2)
 clf.fit(X_train_reduced, y_train)
 
 best_params = clf.best_params_
@@ -77,21 +75,39 @@ best_model = clf.best_estimator_
 
 # use the best model to evaluate on the official test set and report the test accuracy
 score = best_model.score(X_test_reduced, y_test)
+print(f"Test Accuracy: {score: .3f}")
 
 y_pred = best_model.predict(X_test_reduced)
 
-print(f"Test Accuracy: {score: .3f}")
 incorrect_indices = np.where(y_pred != y_test)[0]
-print("Number of misclassified images:", len(incorrect_indices))
+print(f"Number of misclassified images: {len(incorrect_indices)} out of {X_test_reduced.shape[0]}")
+
+# class label in CIFAR
+classes = [
+    "airplane", "automobile", "bird", "cat", "deer",
+    "dog", "frog", "horse", "ship", "truck"
+]
 
 # select the first 5 misclassified test image
 five_incorrect = incorrect_indices[:5]
 
+fig, ax = plt.subplots(1, 5, figsize=(10, 3))
+
 for i, index in enumerate(five_incorrect):
-    # use the origin dimension test image
-    img = X_test[index].reshape(32, 32, 3)
-    plt.figure(figsize=(2,2))
-    plt.imshow(img)
-    plt.title(f"True: {y_test[index]}, Predicted: {y_pred[index]}")
-    plt.axis('off')
-    plt.show()
+    
+    # 1) reshape to (channels, height, width)
+    img = X_test[index].reshape(3, 32, 32)
+
+    # 2) transpose to (height, width, channels) for matplotlib
+    img = img.transpose(1, 2, 0)
+    
+    true_class = classes[y_test[index]]
+    pred_class = classes[y_pred[index]]
+    
+    ax[i].imshow(img, interpolation='nearest')
+    ax[i].set_title(f"True: {true_class}\nPredict: {pred_class}")
+    ax[i].axis("off")
+
+plt.tight_layout()
+plt.savefig("images/svm_misclassifions.png", dpi=300)
+plt.show()

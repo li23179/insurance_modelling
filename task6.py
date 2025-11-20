@@ -113,7 +113,7 @@ for _ in range(num_models):
     
 def boosting_predict(test_data, models, alphas):
     votes = np.zeros((test_data.shape[0], len(models)))
-    combined_predictions = np.zeros(test_data.shape[0])
+    combined_predictions = np.zeros(test_data.shape[0], dtype=int)
     
     for index, m in enumerate(models):
         # obtain predictions from each model and store it in votes
@@ -130,16 +130,34 @@ accuracy = np.count_nonzero(prediction==np.int64(y_test)) / y_test.shape[0]
 print(f"Test Accuracy: {accuracy: .3f}")
 
 incorrect_indices = np.where(prediction != y_test)[0]
-print("Number of misclassified images:", len(incorrect_indices))
+print(f"Number of misclassified images: {len(incorrect_indices)} out of {X_test_reduced.shape[0]}")
 
-# select the first 5 missclassified image
+# class label in CIFAR
+classes = [
+    "airplane", "automobile", "bird", "cat", "deer",
+    "dog", "frog", "horse", "ship", "truck"
+]
+
+# select the first 5 misclassified test image
 five_incorrect = incorrect_indices[:5]
 
+fig, ax = plt.subplots(1, 5, figsize=(10, 3))
+
 for i, index in enumerate(five_incorrect):
-    # use the origin dimension test image
-    img = X_test[index].reshape(32, 32, 3)
-    plt.figure(figsize=(2,2))
-    plt.imshow(img)
-    plt.title(f"True: {y_test[index]}, Predicted: {prediction[index]}")
-    plt.axis('off')
-    plt.show()
+    
+    # 1) reshape to (channels, height, width)
+    img = X_test[index].reshape(3, 32, 32)
+
+    # 2) transpose to (height, width, channels) for matplotlib
+    img = img.transpose(1, 2, 0)
+    
+    true_class = classes[y_test[index]]
+    pred_class = classes[prediction[index]]
+    
+    ax[i].imshow(img, interpolation='nearest')
+    ax[i].set_title(f"True: {true_class}\nPredict: {pred_class}")
+    ax[i].axis("off")
+
+plt.tight_layout()
+plt.savefig("images/adaboost_misclassifions.png", dpi=300)
+plt.show()
