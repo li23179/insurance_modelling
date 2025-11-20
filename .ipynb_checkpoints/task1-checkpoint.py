@@ -87,5 +87,5 @@ ax.plot( [y_test.min(), y_test.max()],
 
 ax.legend()
 
-plt.savefig("regression_plots/linear_regression_plot.png", dpi=300)
+plt.savefig("plots/linear_regression_plot.png", dpi=300)
 plt.show()

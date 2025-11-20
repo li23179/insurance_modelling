@@ -109,5 +109,5 @@ for i, index in enumerate(five_incorrect):
     ax[i].axis("off")
 
 plt.tight_layout()
-plt.savefig("images/decision_tree_misclassifions.png", dpi=300)
+plt.savefig("classification_images/decision_tree_misclassifions.png", dpi=300)
 plt.show()

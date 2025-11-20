@@ -159,5 +159,5 @@ for i, index in enumerate(five_incorrect):
     ax[i].axis("off")
 
 plt.tight_layout()
-plt.savefig("images/adaboost_misclassifions.png", dpi=300)
+plt.savefig("classification_images/adaboost_misclassifions.png", dpi=300)
 plt.show()

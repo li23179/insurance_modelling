@@ -3,7 +3,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
-from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 
 # Preprocessing 
@@ -56,12 +56,13 @@ X_train_reduced, X_test_reduced = pca_reduction(X_train, X_test)
 
 # Use cross-validation on the training split to select appropriate hyperparameters 
 # (e.g. depth, split criteria). 
-parameters = {"C": [0.1, 1, 5],
-              "kernel": ["linear", "rbf"],
-              "gamma": ["scale", 0.01, 0.001]}
+parameters = {"max_depth": [5, 10, 15, 20],
+              "criterion": ["gini", "entropy"]}
 
-model = SVC()
+#  Initialis a single decision tree classifier on the CIFAR–10 training set. 
+model = DecisionTreeClassifier(random_state=42)
 
+# Initialise GridSearch with 5-fold Cross Validation
 clf = GridSearchCV(model, parameters, cv=5, scoring="accuracy", verbose=2)
 clf.fit(X_train_reduced, y_train)
 
@@ -71,14 +72,13 @@ best_score = clf.best_score_
 print(f"Best 5-fold Cross-Validation Score: {best_score: .3f}")
 print(f"Best Hyperparameter: {best_params}")
 
-best_model = clf.best_estimator_
+best_model = clf.best_estimator_    
 
 # use the best model to evaluate on the official test set and report the test accuracy
 score = best_model.score(X_test_reduced, y_test)
 print(f"Test Accuracy: {score: .3f}")
 
 y_pred = best_model.predict(X_test_reduced)
-
 incorrect_indices = np.where(y_pred != y_test)[0]
 print(f"Number of misclassified images: {len(incorrect_indices)} out of {X_test_reduced.shape[0]}")
 
@@ -109,5 +109,5 @@ for i, index in enumerate(five_incorrect):
     ax[i].axis("off")
 
 plt.tight_layout()
-plt.savefig("classification_images/svm_misclassifions.png", dpi=300)
+plt.savefig("images/decision_tree_misclassifions.png", dpi=300)
 plt.show()

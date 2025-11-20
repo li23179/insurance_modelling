@@ -92,5 +92,5 @@ with model:
     az.plot_trace(idata, var_names=["w0", "w", "sigma"])
     plt.tight_layout()
     
-    plt.savefig("regression_plots/traceplot.png", dpi=300, bbox_inches="tight")
+    plt.savefig("plots/traceplot.png", dpi=300, bbox_inches="tight")
     plt.show()

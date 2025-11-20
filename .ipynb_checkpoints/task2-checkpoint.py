@@ -152,6 +152,6 @@ ax.set_ylabel("Predicted Charges")
 ax.set_title("Neural Netword: Predicted vs. Actual Charges (Test Set)")
 ax.legend()
 
-plt.savefig("regression_plots/neural_network_plot.png", dpi=300)
+plt.savefig("plots/neural_network_plot.png", dpi=300)
 plt.show()
 
